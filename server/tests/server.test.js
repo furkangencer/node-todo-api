@@ -4,7 +4,7 @@ const request = require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
-// This func is gonne run before every test-case.
+// This func is gonna run before every test-case.
 // Removes every todos
 beforeEach((done) => {
     Todo.remove({}).then(() => {
