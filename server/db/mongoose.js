@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 // In order to use regular ES6 Promises with Mongoose though, you must explicitly specify global.Promise which is the built-in JavaScript Promise.
 mongoose.Promise = global.Promise;
 
-mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/TodoApp').then().catch((err) => {
+mongoose.connect(process.env.MONGOLAB_URI).then().catch((err) => {
     console.log(`Can't connect to MongoDB \n ${err}`);
 });
 // https://forum.freecodecamp.org/t/guide-for-using-mongodb-and-deploying-to-heroku/19347
