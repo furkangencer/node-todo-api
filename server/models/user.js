@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 var UserSchema = new mongoose.Schema({
     email: {
@@ -67,6 +68,23 @@ UserSchema.statics.findByToken = function(token) {
         'tokens.access': 'auth',
     });
 };
+
+// The code to run before a given event (In this case, it's save() event)
+// We want to hash the user's password before saving it to database.
+UserSchema.pre('save', function (next) {
+    var user = this;
+
+    if ( user.isModified('password') ){
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(user.password, salt, (err, hash) => {
+                user.password = hash;
+                next();
+            });
+        });
+    }else {
+        next();
+    }
+});
 
 var User = mongoose.model('User', UserSchema);
 
