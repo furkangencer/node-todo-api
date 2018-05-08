@@ -40,14 +40,31 @@ UserSchema.methods.toJSON = function () {
 };
 
 UserSchema.methods.generateAuthToken = function () {
-    var user = this;
+    var user = this; // The individual document
     var access = 'auth';
     var token = jwt.sign({_id: user._id.toHexString(), access: access}, 'abc123');
 
     user.tokens = user.tokens.concat([{access, token}]);
 
-    return user.save().then(() => {
+    return user.save().then(() => { // It updates the user's token information with the token generated above.
         return token;
+    });
+};
+
+UserSchema.statics.findByToken = function(token) {
+    var User = this;
+    var decoded;
+
+    try {
+        decoded = jwt.verify(token, 'abc123');
+    }catch (e) {
+        return Promise.reject();
+    }
+
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth',
     });
 };
 
